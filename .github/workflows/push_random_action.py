@@ -1,23 +1,20 @@
-
-# scripts/push_random_action.py
 import os
 import random
 import requests
 import pandas as pd
-import sys
+import time
 
 API_URL = os.environ.get("API_URL")
 API_KEY = os.environ.get("API_KEY") or os.environ.get("DOT_API_KEY")
 DEVICE_ID = os.environ.get("DEVICE_ID")
 EXCEL_FILE = os.environ.get("EXCEL_FILE", "data.xlsx")
+SLEEP_TIME = int(os.environ.get("SLEEP_TIME", "180"))  # 默认 3 分钟
 
-# 读取 Excel（无表头时，直接用列号）
+# 读取 Excel
 df = pd.read_excel(EXCEL_FILE, header=None)
-
-# 三列分别对应
-titles = df.iloc[:, 0].dropna().tolist()      # 第1列 -> 标题
-signatures = df.iloc[:, 1].dropna().tolist()  # 第2列 -> 签名
-messages = df.iloc[:, 3].dropna().tolist()    # 第3列 -> 内容
+titles = df.iloc[:, 0].dropna().tolist()
+signatures = df.iloc[:, 1].dropna().tolist()
+messages = df.iloc[:, 3].dropna().tolist()
 
 def send_text(title, message, signature):
     headers = {
@@ -36,22 +33,10 @@ def send_text(title, message, signature):
     print(response.json())
 
 def push_random():
-    """随机推送一条"""
     idx = random.randint(0, len(messages) - 1)
     send_text(titles[idx], messages[idx], signatures[idx])
 
-def auto_loop():
-    """自动定时推送"""
+if __name__ == "__main__":
     while True:
         push_random()
         time.sleep(SLEEP_TIME)
-
-def manual_trigger():
-    """等待用户手动回车推送"""
-    while True:
-        input("👉 按回车手动推送一条随机消息：")
-        push_random()
-
-# 启动两个线程：一个自动推送，一个手动触发
-threading.Thread(target=auto_loop, daemon=True).start()
-manual_trigger()  # 主线程监听键盘
