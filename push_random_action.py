@@ -27,7 +27,7 @@ def send_text(title, message, signature):
         "Content-Type": "application/json"
     }
     payload = {
-        "refreshNow": True,
+        "refreshNow": False,
         "deviceId": DEVICE_ID,
         "title": title,
         "message": message,
