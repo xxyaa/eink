@@ -29,8 +29,15 @@ def send_text(title, message, signature):
         "signature": signature
     }
     response = requests.post(API_URL, json=payload, headers=headers)
-    print(f"[推送成功] 标题：{title}, 签名：{signature}, 内容：{message[:20]}...")
-    print(response.json())
+    
+    # 打印详细日志，方便在 GitHub Actions 里查看
+    print("=== 推送详情 ===")
+    print("标题：", title)
+    print("签名：", signature)
+    print("内容：", message[:80])  # 只显示前80个字，避免太长
+    print("API 返回：", response.json())
+    print("================\n")
+
 
 def push_random():
     idx = random.randint(0, len(messages) - 1)
