@@ -35,6 +35,6 @@ jobs:
 
       - name: Run push script
         run: |
-          python scripts/push_random_action.py || true
+          python push_random_action.py || true
 
         
