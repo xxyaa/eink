@@ -31,4 +31,7 @@ jobs:
           pip install pandas openpyxl requests pillow
 
       - name: Run push script
-        run: python scripts/push_random_action.py
+        run: |
+          python scripts/push_random_action.py || true
+
+        
