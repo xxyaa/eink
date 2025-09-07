@@ -3,12 +3,17 @@ import random
 import requests
 import pandas as pd
 import time
+from datetime import datetime
 
+# ================= 配置 =================
 API_URL = os.environ.get("API_URL")
 API_KEY = os.environ.get("API_KEY") or os.environ.get("DOT_API_KEY")
 DEVICE_ID = os.environ.get("DEVICE_ID")
 EXCEL_FILE = os.environ.get("EXCEL_FILE", "data.xlsx")
-SLEEP_TIME = int(os.environ.get("SLEEP_TIME", "180"))  # 默认 3 分钟
+INTERVAL = 30 * 60  # 30 分钟，单位秒
+START_HOUR = 8      # 开始时间 08:00
+END_HOUR = 20       # 结束时间 20:00
+# =======================================
 
 # 读取 Excel
 df = pd.read_excel(EXCEL_FILE, header=None)
@@ -28,22 +33,28 @@ def send_text(title, message, signature):
         "message": message,
         "signature": signature
     }
-    response = requests.post(API_URL, json=payload, headers=headers)
-    
-    # 打印详细日志，方便在 GitHub Actions 里查看
-    print("=== 推送详情 ===")
-    print("标题：", title)
-    print("签名：", signature)
-    print("内容：", message[:80])  # 只显示前80个字，避免太长
-    print("API 返回：", response.json())
-    print("================\n")
-
+    try:
+        response = requests.post(API_URL, json=payload, headers=headers)
+        print("=== 推送详情 ===")
+        print("时间：", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        print("标题：", title)
+        print("签名：", signature)
+        print("内容：", message[:80])
+        print("API 返回：", response.json())
+        print("================\n")
+    except Exception as e:
+        print(f"发送失败：{e}")
 
 def push_random():
     idx = random.randint(0, len(messages) - 1)
     send_text(titles[idx], messages[idx], signatures[idx])
 
 if __name__ == "__main__":
+    print("推送脚本启动...，只在白天时间段推送，每 30 分钟一次")
     while True:
-        push_random()
-        time.sleep(SLEEP_TIME)
+        now = datetime.now()
+        if START_HOUR <= now.hour < END_HOUR:
+            push_random()
+        else:
+            print(f"{now.strftime('%H:%M:%S')} 非推送时间，等待下一轮...")
+        time.sleep(INTERVAL)
