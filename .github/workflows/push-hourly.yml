@@ -6,6 +6,9 @@ on:
   # 手动触发（在 GitHub UI 会出现 Run workflow 按钮）
   workflow_dispatch:
 
+  schedule:
+    - cron: "0,30 8-22 * * *"   # 每天 8:00 到 20:30，每半小时运行一次
+
 
 jobs:
   push:
