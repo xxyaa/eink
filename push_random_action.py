@@ -5,9 +5,11 @@ import pandas as pd
 from datetime import datetime
 
 # ================= 配置 =================
-API_URL = os.environ.get("API_URL")
 API_KEY = os.environ.get("API_KEY") or os.environ.get("DOT_API_KEY")
 DEVICE_ID = os.environ.get("DEVICE_ID")
+if not DEVICE_ID:
+    raise ValueError("DEVICE_ID 环境变量未设置")
+API_URL = f"https://dot.mindreset.tech/api/authV2/open/device/{DEVICE_ID}/text"
 EXCEL_FILE = os.environ.get("EXCEL_FILE", "data.xlsx")
 # =======================================
 
@@ -24,7 +26,6 @@ def send_text(title, message, signature):
     }
     payload = {
         "refreshNow": True,
-        "deviceId": DEVICE_ID,
         "title": title,
         "message": message,
         "signature": signature
