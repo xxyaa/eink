@@ -23,7 +23,7 @@ def send_text(title, message, signature):
         "Content-Type": "application/json"
     }
     payload = {
-        "refreshNow": False,
+        "refreshNow": True,
         "deviceId": DEVICE_ID,
         "title": title,
         "message": message,
