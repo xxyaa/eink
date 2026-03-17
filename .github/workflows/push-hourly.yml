@@ -16,7 +16,6 @@ jobs:
   push:
     runs-on: ubuntu-latest
     env:
-      API_URL: https://dot.mindreset.tech/api/open/text
       API_KEY: ${{ secrets.DOT_API_KEY }}
       DEVICE_ID: ${{ secrets.DEVICE_ID }}
       EXCEL_FILE: data.xlsx
